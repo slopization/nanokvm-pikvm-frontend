@@ -3156,7 +3156,78 @@
       </div>
       <div id="nanokvm-content">
         <section>
-          <h2>Host and stream</h2>
+          <h2>Device</h2>
+          <div class="nanokvm-grid">
+            <label>USB audio class
+              <select id="nanokvm-usb-audio-class">
+                <option value="uac1">UAC1</option>
+                <option value="uac2">UAC2</option>
+              </select>
+            </label>
+          </div>
+        </section>
+        <section>
+          <h2>Web KVM</h2>
+          <div class="nanokvm-grid">
+            <label>Video codec
+              <select disabled>
+                <option>HEVC</option>
+              </select>
+            </label>
+            <label>Audio source
+              <select id="nanokvm-web-audio">
+                <option value="usb">USB audio</option>
+                <option value="none">Disabled</option>
+                <option value="silence">Silence</option>
+                <option value="tone">Test tone</option>
+              </select>
+            </label>
+            <label>Opus bitrate (kbps)
+              <input id="nanokvm-web-opus-rate" type="number" min="16" max="512" required>
+            </label>
+            <label>Opus complexity
+              <input id="nanokvm-web-opus-complexity" type="number" min="0" max="10" required>
+            </label>
+            <label>Capture width
+              <input id="nanokvm-web-width" type="number" min="1" required>
+            </label>
+            <label>Capture height
+              <input id="nanokvm-web-height" type="number" min="1" required>
+            </label>
+            <label>Capture FPS
+              <input id="nanokvm-web-fps" type="number" min="1" max="240" required>
+            </label>
+            <label>Frame divider
+              <input id="nanokvm-web-divider" type="number" min="1" required>
+            </label>
+            <label>Bitrate limit (kbps)
+              <input id="nanokvm-web-bitrate" type="number" min="1" placeholder="Automatic">
+            </label>
+            <label>GOP frames (0 = software decoder)
+              <input id="nanokvm-web-gop" type="number" min="0" required>
+            </label>
+            <label>HEVC loop filter
+              <input id="nanokvm-web-loop-filter" type="number" placeholder="Driver default">
+            </label>
+            <label class="nanokvm-check">
+              <input id="nanokvm-web-seek" type="checkbox"><span>Jump to live edge</span>
+            </label>
+            <label class="nanokvm-check">
+              <input id="nanokvm-web-wavefront" type="checkbox"><span>Wavefront (WPP)</span>
+            </label>
+            <label class="nanokvm-check">
+              <input id="nanokvm-web-repeat-headers" type="checkbox"><span>Repeat codec headers</span>
+            </label>
+            <label class="nanokvm-check">
+              <input id="nanokvm-web-aud" type="checkbox"><span>Insert access-unit delimiters</span>
+            </label>
+          </div>
+          <div class="nanokvm-actions">
+            <button id="nanokvm-save-web" type="button">Save Web KVM</button><span id="nanokvm-web-save-status"></span>
+          </div>
+        </section>
+        <section>
+          <h2>Moonlight host</h2>
           <div class="nanokvm-grid">
             <label>Host name
               <input id="nanokvm-name" type="text" maxlength="64" required>
@@ -3164,6 +3235,13 @@
             <label>Video codec
               <select id="nanokvm-codec">
                 <option value="hevc">HEVC</option>
+              </select>
+            </label>
+            <label>Stream encryption
+              <select id="nanokvm-encryption">
+                <option value="never">Disabled</option>
+                <option value="opportunistic">When supported</option>
+                <option value="mandatory">Required</option>
               </select>
             </label>
             <label>Audio source
@@ -3174,18 +3252,11 @@
                 <option value="tone">Test tone</option>
               </select>
             </label>
-            <label>USB audio class
-              <select id="nanokvm-usb-audio-class">
-                <option value="uac1">UAC1</option>
-                <option value="uac2">UAC2</option>
-              </select>
+            <label>Opus bitrate (kbps)
+              <input id="nanokvm-opus-rate" type="number" min="16" max="512" required>
             </label>
-            <label>Stream encryption
-              <select id="nanokvm-encryption">
-                <option value="never">Disabled</option>
-                <option value="opportunistic">When supported</option>
-                <option value="mandatory">Required</option>
-              </select>
+            <label>Opus complexity
+              <input id="nanokvm-opus-complexity" type="number" min="0" max="10" required>
             </label>
             <label>Capture width
               <input id="nanokvm-width" type="number" min="1" required>
@@ -3199,11 +3270,6 @@
             <label>Frame divider
               <input id="nanokvm-divider" type="number" min="1" required>
             </label>
-          </div>
-        </section>
-        <section>
-          <h2>Encoders</h2>
-          <div class="nanokvm-grid">
             <label>Bitrate limit (kbps)
               <input id="nanokvm-bitrate" type="number" min="1" placeholder="Automatic">
             </label>
@@ -3219,11 +3285,8 @@
             <label>HEVC loop filter
               <input id="nanokvm-loop-filter" type="number" placeholder="Driver default">
             </label>
-            <label>Opus bitrate (kbps)
-              <input id="nanokvm-opus-rate" type="number" min="16" max="512" required>
-            </label>
-            <label>Opus complexity
-              <input id="nanokvm-opus-complexity" type="number" min="0" max="10" required>
+            <label class="nanokvm-check">
+              <input id="nanokvm-wavefront" type="checkbox"><span>Wavefront (WPP)</span>
             </label>
             <label class="nanokvm-check">
               <input id="nanokvm-repeat-headers" type="checkbox"><span>Repeat codec headers</span>
@@ -3233,7 +3296,7 @@
             </label>
           </div>
           <div class="nanokvm-actions">
-            <button id="nanokvm-save" type="button">Save settings</button><span id="nanokvm-save-status"></span>
+            <button id="nanokvm-save-moonlight" type="button">Save Moonlight</button><span id="nanokvm-moonlight-save-status"></span>
           </div>
         </section>
         <section>

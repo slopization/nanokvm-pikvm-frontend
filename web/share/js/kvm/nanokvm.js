@@ -20,61 +20,104 @@ export function Nanokvm() {
 	const optionalNumber = id => ($(id).value === "" ? null : number(id));
 
 	const loadSettings = async function() {
-		const value = await request("/api/settings");
-		$("nanokvm-name").value = value.name;
-		$("nanokvm-codec").value = value.codec;
-		$("nanokvm-audio").value = value.audio;
+		const value = await request("/api/settings/sections");
+		const web = value.web;
+		const moonlight = value.moonlight;
 		$("nanokvm-usb-audio-class").value = value.usb_audio_class;
-		$("nanokvm-encryption").value = value.encryption_mode;
-		$("nanokvm-width").value = value.capture_width;
-		$("nanokvm-height").value = value.capture_height;
-		$("nanokvm-fps").value = value.advertised_fps;
-		$("nanokvm-divider").value = value.frame_divider;
-		$("nanokvm-bitrate").value = value.bitrate_kbps ?? "";
-		$("nanokvm-gop").value = value.gop;
-		$("nanokvm-fec").value = value.video_fec_percentage;
-		$("nanokvm-parity").value = value.video_min_parity_shards;
-		$("nanokvm-loop-filter").value = value.hevc_loop_filter ?? "";
-		$("nanokvm-opus-rate").value = value.opus_bitrate_kbps;
-		$("nanokvm-opus-complexity").value = value.opus_complexity;
-		$("nanokvm-repeat-headers").checked = value.repeat_headers;
-		$("nanokvm-aud").checked = value.aud;
+
+		$("nanokvm-web-audio").value = web.audio;
+		$("nanokvm-web-opus-rate").value = web.opus_bitrate_kbps;
+		$("nanokvm-web-opus-complexity").value = web.opus_complexity;
+		$("nanokvm-web-width").value = web.capture_width;
+		$("nanokvm-web-height").value = web.capture_height;
+		$("nanokvm-web-fps").value = web.advertised_fps;
+		$("nanokvm-web-divider").value = web.frame_divider;
+		$("nanokvm-web-bitrate").value = web.bitrate_kbps ?? "";
+		$("nanokvm-web-gop").value = web.gop;
+		$("nanokvm-web-loop-filter").value = web.hevc_loop_filter ?? "";
+		$("nanokvm-web-seek").checked = web.seek;
+		$("nanokvm-web-wavefront").checked = web.wavefront;
+		$("nanokvm-web-repeat-headers").checked = web.repeat_headers;
+		$("nanokvm-web-aud").checked = web.aud;
+
+		$("nanokvm-name").value = moonlight.name;
+		$("nanokvm-codec").value = moonlight.codec;
+		$("nanokvm-encryption").value = moonlight.encryption_mode;
+		$("nanokvm-audio").value = moonlight.audio;
+		$("nanokvm-opus-rate").value = moonlight.opus_bitrate_kbps;
+		$("nanokvm-opus-complexity").value = moonlight.opus_complexity;
+		$("nanokvm-width").value = moonlight.capture_width;
+		$("nanokvm-height").value = moonlight.capture_height;
+		$("nanokvm-fps").value = moonlight.advertised_fps;
+		$("nanokvm-divider").value = moonlight.frame_divider;
+		$("nanokvm-bitrate").value = moonlight.bitrate_kbps ?? "";
+		$("nanokvm-gop").value = moonlight.gop;
+		$("nanokvm-fec").value = moonlight.video_fec_percentage;
+		$("nanokvm-parity").value = moonlight.video_min_parity_shards;
+		$("nanokvm-loop-filter").value = moonlight.hevc_loop_filter ?? "";
+		$("nanokvm-wavefront").checked = moonlight.wavefront;
+		$("nanokvm-repeat-headers").checked = moonlight.repeat_headers;
+		$("nanokvm-aud").checked = moonlight.aud;
 	};
 
-	const saveSettings = async function() {
-		const button = $("nanokvm-save");
+	const collectWeb = () => ({
+		codec: "hevc",
+		audio: $("nanokvm-web-audio").value,
+		opus_bitrate_kbps: number("nanokvm-web-opus-rate"),
+		opus_complexity: number("nanokvm-web-opus-complexity"),
+		capture_width: number("nanokvm-web-width"),
+		capture_height: number("nanokvm-web-height"),
+		advertised_fps: number("nanokvm-web-fps"),
+		frame_divider: number("nanokvm-web-divider"),
+		bitrate_kbps: optionalNumber("nanokvm-web-bitrate"),
+		gop: number("nanokvm-web-gop"),
+		hevc_loop_filter: optionalNumber("nanokvm-web-loop-filter"),
+		seek: $("nanokvm-web-seek").checked,
+		wavefront: $("nanokvm-web-wavefront").checked,
+		repeat_headers: $("nanokvm-web-repeat-headers").checked,
+		aud: $("nanokvm-web-aud").checked,
+	});
+
+	const collectMoonlight = () => ({
+		name: $("nanokvm-name").value,
+		codec: $("nanokvm-codec").value,
+		audio: $("nanokvm-audio").value,
+		opus_bitrate_kbps: number("nanokvm-opus-rate"),
+		opus_complexity: number("nanokvm-opus-complexity"),
+		capture_width: number("nanokvm-width"),
+		capture_height: number("nanokvm-height"),
+		advertised_fps: number("nanokvm-fps"),
+		frame_divider: number("nanokvm-divider"),
+		bitrate_kbps: optionalNumber("nanokvm-bitrate"),
+		gop: number("nanokvm-gop"),
+		video_fec_percentage: number("nanokvm-fec"),
+		video_min_parity_shards: number("nanokvm-parity"),
+		encryption_mode: $("nanokvm-encryption").value,
+		hevc_loop_filter: optionalNumber("nanokvm-loop-filter"),
+		wavefront: $("nanokvm-wavefront").checked,
+		repeat_headers: $("nanokvm-repeat-headers").checked,
+		aud: $("nanokvm-aud").checked,
+	});
+
+	const saveSettings = async function(section) {
+		const button = $(`nanokvm-save-${section}`);
+		const status = $(`nanokvm-${section}-save-status`);
 		tools.el.setEnabled(button, false);
-		$("nanokvm-save-status").textContent = "Saving";
+		status.textContent = "Saving";
 		try {
-			const result = await request("/api/settings", {
+			const value = await request("/api/settings/sections");
+			value.usb_audio_class = $("nanokvm-usb-audio-class").value;
+			value[section] = section === "web" ? collectWeb() : collectMoonlight();
+			const result = await request("/api/settings/sections", {
 				method: "PUT",
-				body: JSON.stringify({
-					name: $("nanokvm-name").value,
-					codec: $("nanokvm-codec").value,
-					audio: $("nanokvm-audio").value,
-					usb_audio_class: $("nanokvm-usb-audio-class").value,
-					encryption_mode: $("nanokvm-encryption").value,
-					opus_bitrate_kbps: number("nanokvm-opus-rate"),
-					opus_complexity: number("nanokvm-opus-complexity"),
-					capture_width: number("nanokvm-width"),
-					capture_height: number("nanokvm-height"),
-					advertised_fps: number("nanokvm-fps"),
-					frame_divider: number("nanokvm-divider"),
-					bitrate_kbps: optionalNumber("nanokvm-bitrate"),
-					gop: number("nanokvm-gop"),
-					video_fec_percentage: number("nanokvm-fec"),
-					video_min_parity_shards: number("nanokvm-parity"),
-					hevc_loop_filter: optionalNumber("nanokvm-loop-filter"),
-					repeat_headers: $("nanokvm-repeat-headers").checked,
-					aud: $("nanokvm-aud").checked,
-				}),
+				body: JSON.stringify(value),
 			});
-			$("nanokvm-save-status").textContent = result.message;
+			status.textContent = result.message;
 			if (result.message.includes("USB reconnecting")) {
 				setTimeout(() => tools.currentOpen("login"), 2000);
 			}
 		} catch (error) {
-			$("nanokvm-save-status").textContent = error.message;
+			status.textContent = error.message;
 		} finally {
 			tools.el.setEnabled(button, true);
 		}
@@ -183,7 +226,8 @@ export function Nanokvm() {
 		renderDevices($("nanokvm-paired-devices"), devices.paired, pairedDevice);
 	};
 
-	tools.el.setOnClick($("nanokvm-save"), saveSettings);
+	tools.el.setOnClick($("nanokvm-save-web"), () => saveSettings("web"));
+	tools.el.setOnClick($("nanokvm-save-moonlight"), () => saveSettings("moonlight"));
 	tools.el.setOnClick($("nanokvm-change-password"), async function() {
 		try {
 			await request("/api/password/change", {
