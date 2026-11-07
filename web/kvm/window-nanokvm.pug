@@ -97,8 +97,8 @@
 					input#nanokvm-divider(type="number" min="1" required)
 				label Bitrate limit (kbps)
 					input#nanokvm-bitrate(type="number" min="1" placeholder="Automatic")
-				label GOP frames
-					input#nanokvm-gop(type="number" min="1" max="2047" required)
+				label GOP frames (0 = no periodic GOP)
+					input#nanokvm-gop(type="number" min="0" max="2047" required)
 				label Video FEC (%)
 					input#nanokvm-fec(type="number" min="0" max="100" required)
 				label Minimum parity shards

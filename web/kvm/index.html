@@ -3273,8 +3273,8 @@
             <label>Bitrate limit (kbps)
               <input id="nanokvm-bitrate" type="number" min="1" placeholder="Automatic">
             </label>
-            <label>GOP frames
-              <input id="nanokvm-gop" type="number" min="1" max="2047" required>
+            <label>GOP frames (0 = no periodic GOP)
+              <input id="nanokvm-gop" type="number" min="0" max="2047" required>
             </label>
             <label>Video FEC (%)
               <input id="nanokvm-fec" type="number" min="0" max="100" required>
