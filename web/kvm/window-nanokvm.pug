@@ -45,7 +45,7 @@
 				label Bitrate limit (kbps)
 					input#nanokvm-web-bitrate(type="number" min="1" placeholder="Automatic")
 				label GOP frames (0 = software decoder)
-					input#nanokvm-web-gop(type="number" min="0" required)
+					input#nanokvm-web-gop(type="number" min="0" max="2047" required)
 				label HEVC loop filter
 					input#nanokvm-web-loop-filter(type="number" placeholder="Driver default")
 				label.nanokvm-check
@@ -98,7 +98,7 @@
 				label Bitrate limit (kbps)
 					input#nanokvm-bitrate(type="number" min="1" placeholder="Automatic")
 				label GOP frames
-					input#nanokvm-gop(type="number" min="1" required)
+					input#nanokvm-gop(type="number" min="1" max="2047" required)
 				label Video FEC (%)
 					input#nanokvm-fec(type="number" min="0" max="100" required)
 				label Minimum parity shards

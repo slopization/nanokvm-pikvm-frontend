@@ -3204,7 +3204,7 @@
               <input id="nanokvm-web-bitrate" type="number" min="1" placeholder="Automatic">
             </label>
             <label>GOP frames (0 = software decoder)
-              <input id="nanokvm-web-gop" type="number" min="0" required>
+              <input id="nanokvm-web-gop" type="number" min="0" max="2047" required>
             </label>
             <label>HEVC loop filter
               <input id="nanokvm-web-loop-filter" type="number" placeholder="Driver default">
@@ -3274,7 +3274,7 @@
               <input id="nanokvm-bitrate" type="number" min="1" placeholder="Automatic">
             </label>
             <label>GOP frames
-              <input id="nanokvm-gop" type="number" min="1" required>
+              <input id="nanokvm-gop" type="number" min="1" max="2047" required>
             </label>
             <label>Video FEC (%)
               <input id="nanokvm-fec" type="number" min="0" max="100" required>
